@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+model User {
+  id      Int     @id @default(autoincrement())
+  clerkId String  @unique
+  email   String  @unique
+  name    String?
+
+  chats    Chat[]
+  messages Message[]
+
+  @@map("users")
+}
+
+model Chat {
+  id        Int      @id @default(autoincrement())
+  fileName  String
+  fileSize  Int
+  mineType  String
+  fileUrl   String
+  uploadedAt DateTime @default(now())
+
+  userId    Int
+  user      User @relation(fields: [userId], references: [id])
+
+  messages Message[]
+
+  @@map("chats")
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  role      MessageRole
+  content   String?
+  
+  chatId    Int
+  chat      Chat @relation(fields: [chatId], references: [id])
+
+  userId    Int
+  user      User @relation(fields: [userId], references: [id])
+
+  @@map("messages")
+}
+
+enum MessageRole {
+  USER
+  SISTEM
+}
