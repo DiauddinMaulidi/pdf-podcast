@@ -32,6 +32,7 @@ export async function POST(req: NextRequest) {
             name: `${evt.data.first_name} ${evt.data.last_name}`,
           },
         })
+        break;
       case "user.updated":
         await prisma.user.update({
           where: { clerkId: evt.data.id },

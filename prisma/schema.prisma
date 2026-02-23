@@ -1,10 +1,10 @@
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -22,6 +22,7 @@ model User {
 model Chat {
   id        Int      @id @default(autoincrement())
   fileName  String
+  originalName String
   fileSize  Int
   mineType  String
   fileUrl   String
@@ -30,6 +31,7 @@ model Chat {
   userId    Int
   user      User @relation(fields: [userId], references: [id])
 
+  podcast Podcast[]
   messages Message[]
 
   @@map("chats")
@@ -38,16 +40,41 @@ model Chat {
 model Message {
   id        Int      @id @default(autoincrement())
   role      MessageRole
-  content   String?
-  
+  content   String? @db.Text
+  sessionId   Int
+  audioUrl    String?
+  createdAt   DateTime @default(now())
+
   chatId    Int
   chat      Chat @relation(fields: [chatId], references: [id])
 
   userId    Int
   user      User @relation(fields: [userId], references: [id])
+  session    ChatSession @relation(fields: [sessionId], references: [id])
 
   @@map("messages")
 }
+
+model Podcast {
+  id          Int   @id @default(autoincrement())
+  chatId      Int
+  fileName    String
+  audioUrl    String
+  duration    Int?     // optional (detik)
+  createdAt   DateTime @default(now())
+
+  chat    Chat @relation(fields: [chatId], references: [id])
+}
+
+model ChatSession {
+  id          Int   @id @default(autoincrement())
+  chatId      Int
+  podcastId   Int?
+  createdAt   DateTime @default(now())
+
+  messages    Message[]
+}
+
 
 enum MessageRole {
   USER

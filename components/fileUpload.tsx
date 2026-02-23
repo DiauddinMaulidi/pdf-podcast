@@ -39,11 +39,11 @@ const FileUpload = () => {
     })
 
     return (
-        <div {...getRootProps()} className='bg-amber-400 flex flex-col cursor-pointer items-center justify-center rounded-lg py-4 px-8'>
+        <div {...getRootProps()} className='bg-purple-800 flex flex-col cursor-pointer items-center justify-center rounded-lg py-4 px-8'>
             <input {...getInputProps()} accept='application/pdf' />
             <>
-                <Inbox className='w-10 h-10 text-purple-500' />
-                <p className='text-sm text-muted-foreground'>Drop PDF here</p>
+                <Inbox className='w-10 h-10 text-white dark:text-[#22262b]' />
+                <p className='text-sm text-amber-500 dark:text-white'>Drop PDF here</p>
             </>
         </div>
     )

@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { auth } from '@clerk/nextjs/server'
 import { NextResponse } from 'next/server'
-import React from 'react'
 
 export async function GET() {
   try {
@@ -22,7 +21,7 @@ export async function GET() {
         }
     })
 
-    const chats = userChats?.chats
+    const chats = userChats?.chats ?? []
 
     return NextResponse.json(chats, {status: 200})
 

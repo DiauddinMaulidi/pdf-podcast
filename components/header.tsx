@@ -1,15 +1,18 @@
-import React from 'react'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
+"use client"
 import { SignedIn, UserButton } from '@clerk/nextjs'
+import { ModeToggle } from './darkmode'
 
 const Header = () => {
   return (
-    <div>
-      <div className="header flex justify-end p-3 bg-amber-400">
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
+    <div className='flex p-3 bg-linear-to-r text-amber-500 dark:text-white from-[#22262b] to-purple-800 to-90% relative'>
+      <div className='text-2xl font-bold'>
+        <i>PDFPOD</i>
+      </div>
+      <div className="flex flex-1 justify-end w-full mr-4 gap-3">
+          <ModeToggle />
+          <SignedIn>
+            <UserButton />
+          </SignedIn>
       </div>
     </div>
   )

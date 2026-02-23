@@ -4,6 +4,7 @@ import { auth } from "@clerk/nextjs/server";
 import { writeFile } from "fs/promises";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
+import { existsSync } from "node:fs";
 
 export async function POST(request: NextRequest) {
     try {
@@ -60,15 +61,18 @@ export async function POST(request: NextRequest) {
             return NextResponse.json("User not found", {status: 404})
         }
 
-        await prisma.chat.create({
+        const tes = await prisma.chat.create({
             data: {
                 fileName,
+                originalName: originalFilename,
                 fileSize,
                 mineType,
                 fileUrl: filePath,
                 userId: user.id,
             },
         })
+
+        console.log(tes);
 
         return NextResponse.json({
             message: "file berhasil di upload",

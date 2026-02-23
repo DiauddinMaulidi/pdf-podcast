@@ -10,6 +10,8 @@ export async function GET(request:NextRequest, {params}: {params:Promise<{id: st
         const chat = await prisma.chat.findUnique({
             where: {id: parseInt(id)},
         })
+        // console.log(chat);
+
         return NextResponse.json(chat, {status: 200})
     } catch (error) {
         console.log(error);
