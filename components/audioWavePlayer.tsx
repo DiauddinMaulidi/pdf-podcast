@@ -224,8 +224,13 @@ export default function AudioWavePlayer({ src }: { src: string }) {
         body: formData,
       })
 
-      const dataa = await res.json()
-      console.log(dataa);
+      const audioBlob = await res.blob()
+      const audioUrl = URL.createObjectURL(audioBlob)
+
+      if (audioRef.current) {
+        audioRef.current.src = audioUrl
+        audioRef.current.play()
+      }
 
       // const newSrc = `data:audio/mpeg;base64,${data.audio}`
       // setAudioSrc(newSrc)

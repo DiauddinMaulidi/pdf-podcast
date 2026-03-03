@@ -23,9 +23,9 @@ export async function generateEmbeddings(text:string):Promise<number[]> {
 // });
 
 // export const llm2 = await client.chat.completions.create({
-//   model: 'gpt-3.5-turbo',
+//   model: 'gpt-4',
 //   messages: [
-//     { role: 'user', content: 'Gas buat!' }
+//     { role: 'system', content: 'Gas buat!' }
 //   ],
 //   stream: true,
 //   temperature: 0.2,

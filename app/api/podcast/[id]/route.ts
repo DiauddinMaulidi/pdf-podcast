@@ -50,7 +50,7 @@ export async function DELETE( request: NextRequest, { params }: { params: Promis
         }
 
         // hapus di mysql dengan prisma
-        const deleted = await prisma.podcast.deleteMany({
+        await prisma.podcast.deleteMany({
             where: { chatId },
         });
         

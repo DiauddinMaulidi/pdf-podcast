@@ -13,6 +13,15 @@ export async function POST(request:NextRequest) {
         const {message, fileName, chatId, userId} = body
         const context = await getContext(message, fileName)
 
+        const fileNameAudio = `podcast-${fileName}.wav`;
+
+        const filePath = path.join(process.cwd(), "public/audio", fileNameAudio)
+
+        if (fs.existsSync(filePath)) {
+            console.log(filePath, "sudah ada");
+            return NextResponse.json("file sudah ada");
+        }
+
         const systemMessage = [
             new SystemMessage(`
                 Buatkan naskah podcast berdurasi 7-10 menit berdasarkan dokumen ini. Gunakan gaya bahasa seperti host dan co-host podcast yang menjelaskan materi.
@@ -43,14 +52,6 @@ export async function POST(request:NextRequest) {
                 ? response.content
                 : response.content?.toString() ?? "";
 
-        const fileNameAudio = `podcast-${fileName}.wav`;
-
-        const filePath = path.join(process.cwd(), "public/audio", fileNameAudio)
-
-        if (fs.existsSync(filePath)) {
-            console.log(filePath, "sudah ada");
-            return NextResponse.json("file sudah ada");
-        }
 
         const audioUrl = await generatedPodcastAudio(content, fileNameAudio);
         

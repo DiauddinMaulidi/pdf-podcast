@@ -30,18 +30,3 @@ export async function getContext(query:string, fileName: string) {
     const docs = filteredText.map((doc) => doc?.metadata?.text)
     return docs
 }
-
-// export async function getFullDocument(fileName: string) {
-//     const chunks = await prisma.documentChunk.findMany({
-//         where: {
-//             document: {
-//                 fileName: fileName
-//             }
-//         },
-//         orderBy: {
-//             chunkIndex: "asc"
-//         }
-//     })
-
-//     return chunks.map(chunk => chunk.text).join("\n")
-// }

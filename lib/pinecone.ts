@@ -90,55 +90,42 @@ async function searchFromPinecone(fileName:string, question: string): Promise<Sc
 
 export async function askRag(fileName: string, question: string): Promise<string> {
     try {
-        const matches = await searchFromPinecone(fileName, question)
-        
         if (!question || question.trim() === "") {
             throw new Error("Question kosong, tidak bisa generate jawaban");
         }
 
+        const matches = await searchFromPinecone(fileName, question)
         if (!matches || matches.length === 0) {
             const res = await llm.invoke(question)
             return res.content as string
         }
-
-        const topScore = matches[0].score ?? 0
+        
         const context = matches
+            .slice(0, 3)
             .map(match => match.metadata?.content)
             .join("\n\n")
 
-        let prompt = ""
+        const prompt = `
+            Jawab seperti host podcast profesional.
+            Singkat, natural.
 
-        if (topScore > 0.8) {
-            prompt = `Jawab hanya berdasarkan konteks berikut.
-            
+            Ketentuan penting:
+            - Jangan gunakan markdown.
+            - Jangan gunakan bullet point atau penomoran.
+            - Jangan menjelaskan struktur.
+            - Buat Jawaban terasa hidup, tidak kaku.
+            - Jawab berdasarkan document, kalau tidak ada di dokument katakan cari refrensi di GOOGLE
+
             Konteks:
             ${context}
 
             Pertanyaan:
-            ${question}`
-        
-        } else if (topScore > 0.6) {
-            prompt = `Kamu adalah asisten AI yang menjawab pertanyaan secara langsung dan jelas.
-
-            Rules:
-            - Gunakan konteks berikut untuk menjawab pertanyaan secara langsung, singkat, dan jelas.
-            - Jangan menyebutkan bahwa jawaban berasal dari konteks.
-            - Jangan memberikan penjelasan pembuka atau penutup yang tidak perlu.
-
-            Konteks:
-            ${context}
-            
-            Pertanyaan:
-            ${question}`
-
-        } else {
-            const res = await llm.invoke(question)
-            return res.content as string
-        }
+            ${question}
+        `
 
         const answer = await llm.invoke(prompt)
 
-        return answer.text as string
+        return answer.content as string
     } catch (error) {
         throw error
     }

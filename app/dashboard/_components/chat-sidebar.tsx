@@ -11,34 +11,17 @@ const ChatSidebar = () => {
     queryFn: async () => {
       const res = await fetch("/api/chat")
       return await res.json()
-    }
+    },
+    placeholderData: [],
   })
 
   // console.log(data)
 
   return (
     <>
-      <div className='h-screen px-3 bg-[#22262b]'>
-        <div className='mt-1 flex flex-col gap-5 text-amber-500 dark:text-white'>
-          <Link href="/list">
-            <Home />
-          </Link>
-          
-          <Link href="/dashboard">
-            <BookOpen />
-          </Link>
-        </div>
-      </div>
-      <ResizablePanel defaultSize={15} minSize={12}>
-        <div className='h-full bg-purple-800 flex flex-col items-center px-2 pt-3'>
-            {/* <div>
-                <Link href="/dashboard">
-                    <Button>
-                        <ArrowLeft />
-                        Upload PDF
-                    </Button>
-                </Link>
-            </div> */}
+      <ResizablePanel defaultSize={15} minSize={12} className='py-3 pl-3 bg-gray-300 dark:bg-[#15161a]'>
+        <div className='h-screen bg-purple-800 flex flex-col items-center rounded-lg px-2 pt-3'>
+          <p className='dark:text-white text-amber-500 font-bold'>SUMBER</p>
             <div className='w-full h-full overflow-y-auto py-4 flex-1'>
               {isLoading?(Array.from({length: 1}).map((_, i) => (
                 <p key={i}>Loading...</p>
@@ -48,7 +31,7 @@ const ChatSidebar = () => {
                   <Link 
                     key={chat.id}
                     href={`/dashboard/chat/${chat.id}`}
-                    className='w-full truncate p-2 dark:bg-[#22262b] bg-white dark:text-white text-amber-500 rounded-lg hover:bg-fuchsia-400'>
+                    className='w-full truncate p-2 bg-gray-300 dark:bg-[#2c2c33] dark:text-white text-amber-500 rounded-lg hover:bg-fuchsia-400'>
                       {chat.originalName}
                   </Link>
                 ))}
@@ -58,10 +41,9 @@ const ChatSidebar = () => {
         </div>
       </ResizablePanel>
 
-      <div>
-        <ResizableHandle withHandle className='bg-purple-800 w-1 h-full' />
+      <div className='py-3'>
+        <ResizableHandle withHandle className='bg-transparent h-screen' />
       </div>
-
     </>
   )
 }

@@ -39,7 +39,7 @@ const FileUpload = () => {
     })
 
     return (
-        <div {...getRootProps()} className='bg-purple-800 flex flex-col cursor-pointer items-center justify-center rounded-lg py-4 px-8'>
+        <div {...getRootProps()} className='bg-purple-800 flex flex-col cursor-pointer items-center justify-center rounded-lg py-4 px-8 h-full'>
             <input {...getInputProps()} accept='application/pdf' />
             <>
                 <Inbox className='w-10 h-10 text-white dark:text-[#22262b]' />

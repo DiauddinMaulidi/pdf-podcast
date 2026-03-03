@@ -41,16 +41,13 @@ model Message {
   id        Int      @id @default(autoincrement())
   role      MessageRole
   content   String? @db.Text
-  sessionId   Int
-  audioUrl    String?
   createdAt   DateTime @default(now())
 
   chatId    Int
-  chat      Chat @relation(fields: [chatId], references: [id])
+  chat      Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
 
   userId    Int
-  user      User @relation(fields: [userId], references: [id])
-  session    ChatSession @relation(fields: [sessionId], references: [id])
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("messages")
 }
@@ -63,16 +60,7 @@ model Podcast {
   duration    Int?     // optional (detik)
   createdAt   DateTime @default(now())
 
-  chat    Chat @relation(fields: [chatId], references: [id])
-}
-
-model ChatSession {
-  id          Int   @id @default(autoincrement())
-  chatId      Int
-  podcastId   Int?
-  createdAt   DateTime @default(now())
-
-  messages    Message[]
+  chat    Chat @relation(fields: [chatId], references: [id], onDelete: Cascade)
 }
 
 

@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json("User not found", {status: 404})
         }
 
-        const tes = await prisma.chat.create({
+        await prisma.chat.create({
             data: {
                 fileName,
                 originalName: originalFilename,
@@ -71,8 +71,6 @@ export async function POST(request: NextRequest) {
                 userId: user.id,
             },
         })
-
-        console.log(tes);
 
         return NextResponse.json({
             message: "file berhasil di upload",

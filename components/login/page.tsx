@@ -11,13 +11,13 @@ const Login = () => {
         signUpForceRedirectUrl={"/dashboard"}
         oauthFlow="popup"
         mode="modal">
-          <Button className="shadow-xl animate-bounce cursor-pointer">Sign In</Button>
+          <Button className="shadow-xl animate-bounce cursor-pointer bg-green-500">Sign In</Button>
         </SignInButton>
       </SignedOut>
 
       <SignedIn>
         <Link href="/dashboard">
-          <Button variant="default" size="lg">Go to Dashboard</Button>
+          <Button variant="default" size="lg" className="shadow-xl animate-bounce cursor-pointer bg-green-500">Go to Dashboard</Button>
         </Link>
       </SignedIn>
 
