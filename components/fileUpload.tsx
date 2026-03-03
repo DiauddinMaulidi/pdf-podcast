@@ -3,6 +3,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { Inbox } from 'lucide-react'
 import {useDropzone} from 'react-dropzone'
+import { toast } from 'sonner'
 
 const FileUpload = () => {
     const queryClient = useQueryClient()
@@ -31,10 +32,10 @@ const FileUpload = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ["chats"]})
-            console.log("file uploaded successfully")
+            toast.success("file berhasil di upload")
         },
         onError: () => {
-            console.log("file uploaded error")
+            toast.error("file gagal di upload")
         }
     })
 

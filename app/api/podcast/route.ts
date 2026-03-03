@@ -18,7 +18,6 @@ export async function POST(request:NextRequest) {
         const filePath = path.join(process.cwd(), "public/audio", fileNameAudio)
 
         if (fs.existsSync(filePath)) {
-            console.log(filePath, "sudah ada");
             return NextResponse.json("file sudah ada");
         }
 

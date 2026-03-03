@@ -10,6 +10,7 @@ import Rekam from "@/components/rekam"
 import { Send, Trash } from "lucide-react"
 import HumbergerMenu from "@/components/humbergerMenu"
 import { useRouter } from "next/router"
+import { toast } from "sonner"
 
 type Props = {
     fileName: string,
@@ -21,15 +22,14 @@ const ChatContainer = ({fileName, chatId}: Props) => {
   const [selectMode, setSelectMode] = useState(false)
   const [selectIds, setSelectIds] = useState<number[]>([])
   const queryClient = useQueryClient()
-  // const router = useRouter()
-
 
   const {data:messages= [], isLoading, error} = useQuery({
     queryKey: ["messages", chatId],
     queryFn: async (): Promise<Message[]> => {
       const res = await fetch(`/api/message/${chatId}`)
       if(!res.ok) {
-        throw new Error("Failed to fetch messages")
+        toast.error("Failed to fetch messages")
+        // throw new Error("Failed to fetch messages")
       }
       return await res.json()
     }
@@ -51,7 +51,8 @@ const ChatContainer = ({fileName, chatId}: Props) => {
         })
       })
       if (!res.ok) {
-        throw new Error("Failed to send message")
+        toast.error("Failed to send message")
+        // throw new Error("Failed to send message")
       }
       setMessage("")
       return await res.json()
@@ -94,10 +95,11 @@ const ChatContainer = ({fileName, chatId}: Props) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['messages', chatId] })
+      toast.success("Berhasil menghapus chats")
       // router.push(`/dashboard/chat/${chatId}`)
     },
     onError: () => {
-      console.log("error deleting messages")
+      toast.error("Gagal menghapus chats")
     }
   })
 

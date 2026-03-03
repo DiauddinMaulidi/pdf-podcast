@@ -1,14 +1,14 @@
 "use client"
-import AudioWavePlayer from '@/components/audioWavePlayer'
+
 import { Button } from '@/components/ui/button'
-import { ResizableHandle, ResizablePanel } from '@/components/ui/resizable'
+import { ResizablePanel } from '@/components/ui/resizable'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { GripVertical, Loader, Mic, Trash } from 'lucide-react'
+import { Loader, Trash, Volume2 } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import ChatSidebar from '../../_components/chat-sidebar'
 import ChatContainer from '../_components/chat-container'
-// import AudioPlayer from 'react-audio-player';
+import { toast } from 'sonner'
 
 const useIsHydrated = () => {
   const [hydrated, setHydrated] = useState(false);
@@ -24,7 +24,6 @@ const DetailChat = () => {
     const id = Array.isArray(params?.id) ? params.id[0] : params?.id
     if (!id) return null
 
-    const [isOpen, setIsOpen] = useState(false)
     const [isHydrated] = useIsHydrated()
 
     const queryClient = useQueryClient()
@@ -43,12 +42,10 @@ const DetailChat = () => {
         enabled: !!id,
         queryFn: async ():Promise<any> => {
             const res = await fetch(`/api/podcast/${id}`)
-            // console.log(res);
             return await res.json()
         }
     })
 
-    // const [script, setScript] = useState("")
     const [isGenerating, setIsGenerating] = useState(false)
 
     const generate = async () => {
@@ -69,9 +66,10 @@ const DetailChat = () => {
         
         
         await response.json()
-        // setScript(res.script)
+        toast.info("Berhasil membuat audio")
         await refetch()
     } catch (error) {
+        toast.error("Gagal membuat audio")
         console.log(error)
     } finally {
         setIsGenerating(false)
@@ -87,10 +85,12 @@ const DetailChat = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['chats', id] })
+            toast.success("chats ini berhasil di hapus")
             router.push("/dashboard")
-        },
-        onError: () => {
-            console.log("error deleting chats")
+          },
+          onError: () => {
+            toast.error("gagal menghapus chat")
+            router.push("/dashboard")
         }
     })
 
@@ -100,13 +100,15 @@ const DetailChat = () => {
                 method: "DELETE",
             })
             return await res.json()
-        },
+          },
         onSuccess: () => {
             queryClient.invalidateQueries({queryKey: ['podcast', id] })
+            toast.success("Audio ini berhasil di hapus")
             router.push(`/dashboard/chat/${id}`)
-        },
-        onError: () => {
-            console.log("error deleting chats");
+          },
+          onError: () => {
+            toast.error("gagal menghapus audio")
+            router.push(`/dashboard/chat/${id}`)
         }
     })
 
@@ -131,7 +133,7 @@ const DetailChat = () => {
                   {mutation.isPending?<Loader className='animate-spin' />:<Trash />}
                 </Button>
                 <Button onClick={generate} disabled={isGenerating} className="cursor-pointer ml-3" >
-                  {isGenerating ? <Loader className="h-4 animate-spin" /> :<Mic />}
+                  {isGenerating ? <Loader className="h-4 animate-spin" /> :<Volume2 />}
                   {/* {isGenerating} */}
                 </Button>
               </div>
