@@ -1,15 +1,14 @@
 import { getContext } from "@/lib/context";
 import { llm } from "@/lib/gemini";
-import { askRag } from "@/lib/pinecone";
 import { prisma } from "@/lib/prisma";
 import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { MessageRole } from "@prisma/client";
-import "dotenv/config";
+// import "dotenv/config";
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-  export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest) {
     try {
       let message: string | null = null;
       let chatId: string | null = null;
@@ -138,46 +137,4 @@ import { NextResponse } from "next/server";
       console.log(err)
       return NextResponse.json({ error: err.message }, { status: 500 });
     }
-  }
-
-// export async function POST(request:NextRequest) {
-//     try {
-//         const { question, fileName } = await request.json();
-
-//         const matches = await searchFromPinecone(fileName, question)
-
-//         const topScore = matches[0]?.score ?? 0
-
-//         let context = "";
-
-//         if(topScore > 0.75) {
-//             context = matches.map((match: any) => match.metadata.text).join("\n")
-//         }
-
-//         const promt = `
-//             Gunakan konteks berikut untuk menjawab pertanyaan. Jika konteks tidak cukup, gunakan pengetahuan umum untuk melengkapi.
-
-//             Ketentuan penting:
-//             - Jika ada yang ingin bertanya dan klik tombol join, sapa dulu seperti podcast pada umumnya
-//             - Sapa seperti "Hai teman apa kabar?" atau apapun 
-
-//             konteks
-//             ${context}
-            
-//             pertanyaan
-//             ${question}
-//         `
-
-//         const answer = await generateEmbeddings(promt)
-
-//         return NextResponse.json({ answer, score: topScore })
-//     } catch (error) {
-//         return NextResponse.json(
-//         { error: "Failed to search context" },
-//         { status: 500 }
-//         );
-//     }
-// }
-
-// export async function POST(req: NextRequest) {
-//   const { audioBase64, fileName } = await req.json()
+}
