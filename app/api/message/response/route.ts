@@ -4,12 +4,6 @@ import { prisma } from "@/lib/prisma";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { MessageRole } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  baseURL: 'https://ai.megallm.io/v1',
-  apiKey: process.env.MEGALLM_API_KEY
-});
 
 export async function POST(request: NextRequest) {
     try {

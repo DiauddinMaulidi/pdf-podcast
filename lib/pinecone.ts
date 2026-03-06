@@ -5,6 +5,7 @@ import {Pinecone, RecordMetadata, ScoredPineconeRecord} from "@pinecone-database
 import path from "path"
 import { generateEmbeddings, llm } from "./gemini";
 import { NextResponse } from "next/server";
+import { supabase } from "./supabase";
 
 // inisialisasi pinecone
 export const pc = new Pinecone({
@@ -14,23 +15,35 @@ const index = pc.index(process.env.PINECONE_INDEX_NAME!)
 
 export async function LoadToPinecone(fileName: string) {
     try {
-        const filePath = path.join(process.cwd(), "public/file", fileName)
+        const { data, error } = await supabase.storage
+            .from("document")
+            .download(fileName)
+        
+        if (error) throw error
 
-        const loader = new PDFLoader(filePath)
+        const loader = new PDFLoader(data)
         const directoryDocs = await loader.load()
         
         // split into chunks
         const splitter = new RecursiveCharacterTextSplitter({
-            chunkSize: 1000,
-            chunkOverlap: 200,
+            chunkSize: 800,
+            chunkOverlap: 100,
         })
         const splits = await splitter.splitDocuments(directoryDocs);
-
         // create embeddings
         const texts = splits.map((doc) => doc.pageContent)
-        const embeddings = await Promise.all(
-            texts.map(async (text) => await generateEmbeddings(text))
-        )
+        // const embeddings = await Promise.all(
+        //     texts.map(async (text) => await generateEmbeddings(text))
+        // )
+        const embeddings: any = []
+
+        for (const text of texts) {
+            const embedding = await generateEmbeddings(text)
+            embeddings.push(embedding)
+
+            // delay supaya tidak kena rate limit
+            await new Promise((r) => setTimeout(r, 650))
+        }
 
         // create vector object
         const vectors = splits.map((doc, index) => ({
@@ -39,9 +52,8 @@ export async function LoadToPinecone(fileName: string) {
             metadata: {
                 source: fileName,
                 page: doc.metadata.page,
-                text: doc.pageContent,
+                text: doc.pageContent.replace(/[^\x20-\x7E]/g, " "),
                 chunk: index,
-                uploadedAt: Date.now(),
             },
         }))
 
@@ -51,9 +63,10 @@ export async function LoadToPinecone(fileName: string) {
         const upsertPayload = {
             records: vectors
         };
-
+        
         // upload to pinecone
         const result = await index.namespace(fileName).upsert(upsertPayload)
+        // console.log(result)
         return result
     } catch (error) {
         console.log(error);

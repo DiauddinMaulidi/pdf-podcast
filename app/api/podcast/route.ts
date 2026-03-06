@@ -4,22 +4,18 @@ import { generatedPodcastAudio } from "@/lib/geminiTTS";
 import { prisma } from "@/lib/prisma";
 import { HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
+import { supabase } from "@/lib/supabase";
 
 export async function POST(request:NextRequest) {
     try {
         const body = await request.json()
-        const {message, fileName, chatId, userId} = body
+        const {message, fileName, chatId} = body
         const context = await getContext(message, fileName)
 
-        const fileNameAudio = `podcast-${fileName}.wav`;
+        const cleanName = fileName.replace(".pdf", "");
+        const fileNameAudio = `podcast-${cleanName}.wav`;
 
-        const filePath = path.join(process.cwd(), "public/audio", fileNameAudio)
-
-        if (fs.existsSync(filePath)) {
-            return NextResponse.json("file sudah ada");
-        }
+        // const filePath = path.join(process.cwd(), "public/audio", fileNameAudio)
 
         const systemMessage = [
             new SystemMessage(`
@@ -52,14 +48,30 @@ export async function POST(request:NextRequest) {
                 : response.content?.toString() ?? "";
 
 
-        const audioUrl = await generatedPodcastAudio(content, fileNameAudio);
+        const audioBuffer = await generatedPodcastAudio(content);
+
+        const { error } = await supabase.storage
+            .from("audio")
+            .upload(fileNameAudio, audioBuffer, {
+                contentType: "audio/wav",
+            });
+
+        if (error) {
+            throw error;
+        }
+
+        const { data } = supabase.storage
+            .from("audio")
+            .getPublicUrl(fileNameAudio);
         
+        const audioUrl = data?.publicUrl;
+
         await prisma.podcast.create({
             data: {
                 fileName: fileNameAudio,
                 chatId: parseInt(chatId),
                 audioUrl,
-                duration: 6,
+                duration: 0,
             },
         })
 

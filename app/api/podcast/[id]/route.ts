@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import fs from "fs";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(request:NextRequest, {params}: {params:Promise<{id: string}>}) {
     try {
@@ -37,19 +38,17 @@ export async function DELETE( request: NextRequest, { params }: { params: Promis
             );
         }
 
-        for (const podcast of podcasts) {
-            const filePath = path.join(
-                process.cwd(),
-                "public/audio",
-                podcast.fileName
-            )
+        const fileNames = podcasts.map(podcast => podcast?.fileName)
 
-            if (fs.existsSync(filePath)) {
-                await fs.promises.unlink(filePath)
-            }
+        const { error } = await supabase.storage
+            .from("audio")
+            .remove(fileNames);
+
+        if (error) {
+            console.error("Supabase delete error:", error);
         }
 
-        // hapus di mysql dengan prisma
+
         await prisma.podcast.deleteMany({
             where: { chatId },
         });
@@ -60,5 +59,9 @@ export async function DELETE( request: NextRequest, { params }: { params: Promis
         );
     } catch (error) {
         console.log(error);
+        return NextResponse.json(
+            { message: "Internal server error" },
+            { status: 500 }
+        )
     }
 }

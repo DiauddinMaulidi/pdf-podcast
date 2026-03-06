@@ -1,8 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import path from "path";
+import { PassThrough } from "stream";
 import wav from "wav";
 
-export async function generatedPodcastAudio(script:string, fileName: string) {
+export async function generatedPodcastAudio(script:string) {
     const ai = new GoogleGenAI({apiKey: process.env.GOOGLE_API_KEY})
     
     const response = await ai.models.generateContent({
@@ -32,27 +33,33 @@ export async function generatedPodcastAudio(script:string, fileName: string) {
    });
    const data = response.candidates?.[0]?.content?.parts?.[0]?.inlineData?.data;
 
-   if(data) {
-        const audioBuffer = Buffer.from(data, 'base64');
+   if(!data) {
+      //   const filePath = path.join(process.cwd(), "public/audio", fileName);
 
-        const filePath = path.join(process.cwd(), "public/audio", fileName);
-
-        await new Promise((resolve, reject) => {
-            const writer = new wav.FileWriter(filePath, {
-            channels: 1,
-            sampleRate: 24000,
-            bitDepth: 16,
-            });
-
-            writer.on("finish", resolve);
-            writer.on("error", reject);
-
-            writer.write(audioBuffer);
-            writer.end();
-        })
-    } else {
-        console.log("Cannot create buffer from undefined data.");
+      throw new Error("Cannot create buffer from undefined data.");
    }
+   
+   const pcmBuffer = Buffer.from(data, 'base64');
+   
+   const wavWriter = new wav.Writer({
+      channels: 1,
+      sampleRate: 24000,
+      bitDepth: 16,
+   });
+   
+   const stream = new PassThrough();
+   const chunks: Buffer[] = [];
 
-   return `/audio/${fileName}`;
+   stream.on("data", (chunk) => chunks.push(chunk));
+
+   wavWriter.pipe(stream);
+
+   wavWriter.write(pcmBuffer);
+   wavWriter.end();
+
+   await new Promise((resolve) => stream.on("finish", resolve));
+
+   const wavBuffer = Buffer.concat(chunks);
+
+   return wavBuffer;
 }

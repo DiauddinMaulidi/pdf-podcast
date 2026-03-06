@@ -49,7 +49,7 @@ const DetailChat = () => {
     const [isGenerating, setIsGenerating] = useState(false)
 
     const generate = async () => {
-    if (!chatData?.fileName) return
+    // if (!chatData?.fileName) return
 
     try {
         setIsGenerating(true)
@@ -65,8 +65,8 @@ const DetailChat = () => {
         })
         
         
-        await response.json()
-        toast.info("Berhasil membuat audio")
+        const result = await response.json()
+        toast.success("Berhasil membuat audio")
         await refetch()
     } catch (error) {
         toast.error("Gagal membuat audio")
@@ -139,7 +139,7 @@ const DetailChat = () => {
               </div>
             </div>
             <div className='flex-1 min-h-0'>
-              <iframe src={`/file/${chatData?.fileName}#view=FitH`} className='w-full h-full' />
+              <iframe src={`${chatData?.fileUrl}#view=FitH`} className='w-full h-full' />
             </div>
           </div> ) }
       </ResizablePanel>
@@ -147,7 +147,7 @@ const DetailChat = () => {
         <div className='w-full h-screen flex flex-col bg-gray-300 dark:bg-[#15161a]'>
           <div className="flex-1 min-h-0">
             <div className="h-full overflow-y-auto whitespace-pre-wrap py-2">
-              <ChatContainer fileName={podcastData?.fileName as string} chatId={parseInt(id)} />
+              <ChatContainer fileName={chatData?.fileName as string} chatId={parseInt(id)} />
             </div>
           </div>
           <div className='shrink-0'>

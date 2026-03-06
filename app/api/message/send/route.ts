@@ -4,12 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request:NextRequest) {
     try {
+        const {userId: clerkId} = await auth()
         const body = await request.json()
         const {content, chatId, role} = body
-        const {userId} = await auth()
 
+        if (!clerkId) return new Response("Unauthorized", { status: 401 })
         const user = await prisma.user.findUnique({
-            where: {clerkId: userId}
+            where: { clerkId }
         })
 
         if(!user) return NextResponse.json("Unauthorized", {status: 401})

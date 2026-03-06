@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { deleteNamespace } from "@/lib/pinecone";
+import { supabase } from "@/lib/supabase";
 
 export async function GET(request:NextRequest, {params}: {params:Promise<{id: string}>}) {
     try {
@@ -27,13 +28,7 @@ export async function DELETE(request:NextRequest, {params}: {params:Promise<{id:
             where: {id: parseInt(id)}
         })
 
-        // const pdf = await prisma.chat.findUnique({ where:{id: parseInt(id)} })
-        const filePath = path.join(process.cwd(), 'public/file', chat?.fileName)
-        
-        // hapus file pdf di database local
-        await fs.promises.unlink(filePath)
-        
-        // hapus dari pinecone
+        await supabase.storage.from("document").remove([chat?.fileName])
         await deleteNamespace(chat?.fileName)
 
         return NextResponse.json(chat, {status: 200})

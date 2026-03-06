@@ -4,25 +4,15 @@ import {prisma} from "@/lib/prisma";
 
 export async function POST(req: NextRequest) {
   try {
+    // const secret = process.env.SIGNING_SECRET
+    // if(!secret) return new Response("Missing secret", {status: 500})
+
     const evt = await verifyWebhook(req);
     const { id } = evt.data;
     const eventType = evt.type;
     console.log(
       `Received webhook with ID ${id} and event type of ${eventType}`
     );
-
-    // if (eventType === "user.created") {
-    //   const { id, email_addresses, first_name, last_name } = evt.data;
-    //   await prisma.user.upsert({
-    //     where: { clerkId: id },
-    //     update: {},
-    //     create: {
-    //       clerkId: id,
-    //       email: email_addresses[0].email_address,
-    //       name: `${first_name} ${last_name}`,
-    //     },
-    //   });
-    // }
     switch (eventType) {
       case "user.created":
         await prisma.user.create({
@@ -32,6 +22,7 @@ export async function POST(req: NextRequest) {
             name: `${evt.data.first_name} ${evt.data.last_name}`,
           },
         })
+        console.log("User created successfully")
         break;
       case "user.updated":
         await prisma.user.update({
