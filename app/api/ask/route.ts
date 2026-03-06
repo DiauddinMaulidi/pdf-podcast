@@ -1,13 +1,11 @@
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
 import { getContext } from "@/lib/context";
 import { llm } from "@/lib/gemini";
 import { prisma } from "@/lib/prisma";
 import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 import { AIMessage, HumanMessage, SystemMessage } from "@langchain/core/messages";
 import { MessageRole } from "@prisma/client";
-// import "dotenv/config";
 import { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
