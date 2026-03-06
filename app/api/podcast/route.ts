@@ -1,3 +1,5 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 import { getContext } from "@/lib/context";
 import { llm } from "@/lib/gemini";
 import { generatedPodcastAudio } from "@/lib/geminiTTS";

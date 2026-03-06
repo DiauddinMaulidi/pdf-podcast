@@ -1,7 +1,7 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import path from "path";
-import fs from "fs";
 import { supabase } from "@/lib/supabase";
 
 export async function GET(request:NextRequest, {params}: {params:Promise<{id: string}>}) {
