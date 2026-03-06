@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 import { getContext } from "@/lib/context";
 import { llm } from "@/lib/gemini";
 import { prisma } from "@/lib/prisma";

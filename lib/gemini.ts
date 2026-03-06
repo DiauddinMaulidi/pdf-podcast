@@ -1,6 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings } from "@langchain/google-genai";
-import OpenAI from 'openai';
 
 export const embeddings = new GoogleGenerativeAIEmbeddings({
   model: "gemini-embedding-001",
@@ -16,17 +14,3 @@ export const llm = new ChatGoogleGenerativeAI({
 export async function generateEmbeddings(text:string):Promise<number[]> {
     return await embeddings.embedQuery(text)
 }
-
-// const client = new OpenAI({
-//   baseURL: 'https://ai.megallm.io/v1',
-//   apiKey: process.env.MEGALLM_API_KEY
-// });
-
-// export const llm2 = await client.chat.completions.create({
-//   model: 'gpt-4',
-//   messages: [
-//     { role: 'system', content: 'Gas buat!' }
-//   ],
-//   stream: true,
-//   temperature: 0.2,
-// });
