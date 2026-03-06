@@ -1,7 +1,7 @@
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import fs from "fs";
-import path from "path";
 import { deleteNamespace } from "@/lib/pinecone";
 import { supabase } from "@/lib/supabase";
 
