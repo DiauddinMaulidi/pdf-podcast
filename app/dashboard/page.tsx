@@ -38,8 +38,8 @@ const Dashboard = () => {
                 href={`/dashboard/chat/${data.id}`}
                 className="bg-[#3c4152] dark:bg-[#2c2c33] text-white shadow-lg w-full h-52 rounded-xl cursor-pointer relative"
               >
-                <div className="absolute bottom-0 p-5 text-start">
-                  <p className="text-2xl truncate">{data.originalName}</p>
+                <div className="absolute truncate bottom-0 p-5 text-start">
+                  <p className="text-2xl">{data.originalName}</p>
                   <p>{formatted}</p>
                 </div>
               </Link>
