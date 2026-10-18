@@ -67,7 +67,7 @@ const DetailChat = () => {
         }),
       });
 
-      await response.json();
+      const result = await response.json();
       toast.success("Berhasil membuat audio");
       await refetch();
     } catch (error) {
